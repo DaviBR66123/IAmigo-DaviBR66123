@@ -17,9 +17,9 @@ def conectar():
     DB_NAME=seu_banco
     """
     return mysql.connector.connect(
-        host=os.getenv("DB_HOST", "192.185.213.51"),
-        user=os.getenv("DB_USER", "amasco07_senac"),
-        password=os.getenv("DB_PASSWORD", "Senac1020@"),
+        host=os.getenv("DB_HOST", "localhost"),
+        user=os.getenv("DB_USER", "root"),
+        password=os.getenv("DB_PASSWORD", "Senac2026"),
         database=os.getenv("DB_NAME", "amasco07_iamigo"),
         port=int(os.getenv("DB_PORT", "3306"))
     )
