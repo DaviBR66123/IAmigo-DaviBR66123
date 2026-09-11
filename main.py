@@ -1,35 +1,59 @@
-from data.data_manager import carregar_dados
-from ui.menus import criar_usuario_menu, painel_principal_menu
-from ui.utils import exibir_cabecalho
+from controllers.usuario_controller import UsuarioController
+import os
 
-def executar_sistema():
-    while True:
-        dados = carregar_dados()
-        exibir_cabecalho("SISTEMA TDAH - PERFIS DE USUÁRIO")
-        print("1. Entrar com perfil existente")
-        print("2. Criar novo perfil de usuário")
-        print("3. Encerrar")
-        
-        opcao = input("\nEscolha uma opção: ").strip()
-        
-        if opcao == "1":
-            if not dados:
-                input("\nNenhum perfil salvo. Crie um primeiro! (Enter)")
-                continue
-            print("\nPerfis:")
-            for u in dados: print(f"- {u}")
-            nome = input("\nNome do perfil: ").strip()
-            if nome in dados:
-                painel_principal_menu(dados, nome)
-            else:
-                input("\nPerfil não encontrado! (Enter)")
-        elif opcao == "2":
-            criar_usuario_menu(dados)
-        elif opcao == "3":
-            print("\nAté logo, te vejo em breve!")
-            break
+controller = UsuarioController()
+os.system("cls" if os.name == "nt" else "clear")
 
-if __name__ == "__main__":
-    executar_sistema()
+while True: 
+    print("\n=== EXEMPLO AULA 02 ===") 
+    print("1. Listar perfis")
+    print("2. Buscar usuario por id") 
+    print("3. Criar perfil") 
+    print("4. Sair")
 
-    
+    opcao = input("Escolha: ").strip() 
+
+    if opcao == "1": 
+        perfis = controller.listar_perfis() 
+
+        print("\nPerfis:") 
+        for nome in perfis: 
+            print("-", nome) 
+
+    elif opcao == "2":
+        usuario = input("buscar Usuario de id: ")
+        controller = UsuarioController()
+        usuario = controller.buscar_por_id(usuario)
+
+        print(usuario['mensagem'])
+
+        if usuario['sucesso'] == True:
+            print(f"Nome: {usuario['dados']['nome']}")
+            print(f"Id: {usuario['dados']['id']}")
+            print(f"Estilo: {usuario['dados']['estilo_instrucao']}")
+            print(f"Criado em: {usuario['dados']['criado_em']}")
+
+    elif opcao == "3": 
+        nome = input("Nome: ").strip() 
+
+        print("1. Direto") 
+        print("2. Detalhado") 
+        escolha = input("Estilo: ").strip() 
+
+        estilo = ( 
+        "detalhado" 
+        if escolha == "2" 
+        else "direto" )
+
+        resposta = controller.criar_perfil( 
+        nome, 
+        estilo
+        )
+
+        print(resposta["mensagem"])
+
+    elif opcao == "4": 
+        break
+
+    else: 
+        print("Opção inválida.")
