@@ -7,25 +7,22 @@ class UsuarioRepository:
     def listar(self): 
         with SessionLocal() as session: 
             comando = select(Usuario).order_by(Usuario.nome)
-
-        return list(session.scalars(comando)) 
+            return list(session.scalars(comando)) 
 
     def buscar_por_nome(self, nome): 
         with SessionLocal() as session: 
             comando = select(Usuario).where(Usuario.nome == nome) 
-
-        return session.scalar(comando)
+            return session.scalar(comando)
 
     def buscar_por_id(self, id): 
-            with SessionLocal() as session: 
-                comando = select(Usuario).where(Usuario.id == id) 
-    
+        with SessionLocal() as session: 
+            comando = select(Usuario).where(Usuario.id == id)
             return session.scalar(comando)
     
     def criar(self, nome, estilo_instrucao): 
         with SessionLocal() as session: 
             usuario = Usuario( 
-            nome=nome, 
+            nome=nome,  
             estilo_instrucao=estilo_instrucao 
             )
 
