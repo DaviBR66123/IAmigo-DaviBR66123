@@ -6,20 +6,27 @@ class UsuarioService:
         self.repository = repository or UsuarioRepository()
 
     def listar_usuarios(self): 
-        return self.repository.listar()
+        usuarios = self.repository.listar()
+
+        if usuarios == None:
+            raise ValueError("Não foi possivel listar usuários.")
+
+        usuarios_dict = {u.id: {'id': u.id, 'nome': u.nome, 'estilo': u.estilo_instrucao} for u in usuarios}
+
+        return usuarios_dict
 
     def buscar_por_id(self, id):
         if id == None:
-            raise ValueError("O id não pode ser vazio")
+            raise ValueError("O id não pode ser vazio.")
 
         for i in list(id):
             if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
-                raise ValueError("O id só pode conter números")
+                raise ValueError("O id só pode conter números.")
 
         usuario = self.repository.buscar_por_id(id)
 
         if usuario == None:
-            raise ValueError("Usuário não encontrado")
+            raise ValueError("Usuário não encontrado.")
 
         return usuario
     
