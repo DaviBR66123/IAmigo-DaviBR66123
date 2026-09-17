@@ -10,6 +10,8 @@ class TarefaService:
         print("a")
 
     def buscar_por_id(self, id):
+        id = str(id)
+
         if id == None:
             raise ValueError("O id não pode ser vazio.")
 
@@ -17,12 +19,26 @@ class TarefaService:
             if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
                 raise ValueError("O id só pode conter números.")
 
-        usuario = self.repository.buscar_por_id(id)
+        tarefa = self.repository.buscar_por_id(id)
 
-        if usuario == None:
+        if tarefa == None:
             raise ValueError("Tarefa não encontrada.")
 
-        return usuario
+        prazo = tuple(str(tarefa.prazo))
+        prazo = f"{prazo[8, 9]}/{prazo[5, 6]}/{prazo[0, 3]}"
+
+        tarefa = {
+            "id": tarefa.id,
+            "usuario_id": tarefa.usuario_id,
+            "tipo": tarefa.tipo,
+            "titulo": tarefa.titulo,
+            "descricao": tarefa.descricao,
+            "prioridade": tarefa.prioridade,
+            "prazo": str(tarefa.prazo),
+            "concluida": tarefa.concluida
+        }
+
+        return tarefa
     
     def criar_tarefa(self, usuario_id, tipo, titulo, descricao, prioridade, prazo=None): 
 
@@ -50,7 +66,7 @@ class TarefaService:
 
         if len(list(titulo)) > 200:
             raise ValueError("O titulo deve possuir no máximo 200 caracteres")
-
+ 
         # Regras de descrição
         # Não necessária
 

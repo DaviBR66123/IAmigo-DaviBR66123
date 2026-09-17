@@ -16,7 +16,7 @@ class TarefaRepository:
         
     def criar_tarefa(self, usuario_id, tipo, titulo, descricao, prioridade, prazo=None): 
         with SessionLocal() as session: 
-            tarefa = Tarefa( 
+            tarefa = Tarefa(  
                 usuario_id=usuario_id,
                 tipo=tipo,
                 titulo=titulo,
