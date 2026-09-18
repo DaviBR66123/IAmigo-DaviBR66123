@@ -19,6 +19,8 @@ class UsuarioService:
         if id == None:
             raise ValueError("O id não pode ser vazio.")
 
+        id = str(id)
+
         for i in list(id):
             if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
                 raise ValueError("O id só pode conter números.")
@@ -28,7 +30,14 @@ class UsuarioService:
         if usuario == None:
             raise ValueError("Usuário não encontrado.")
 
-        return usuario
+        resultado = {
+                "id": usuario.id,
+                "nome": usuario.nome,
+                "estilo_instrucao": usuario.estilo_instrucao,
+                "criado_em": usuario.criado_em
+            }
+
+        return resultado
     
     def criar_usuario(self, nome, estilo_instrucao): 
         nome = nome.strip()

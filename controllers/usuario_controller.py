@@ -50,17 +50,12 @@ class UsuarioController:
 
     def buscar_por_id(self, id):
         try:
-            usuario = self.service.buscar_por_id(id)
+            resultado = self.service.buscar_por_id(id)
             return {
                 "sucesso": True,
                 "tipo": "SUCESSO",
                 "mensagem": f"Perfil de id {id} encontrado.",
-                "dados": {
-                    "id": usuario.id,
-                    "nome": usuario.nome,
-                    "estilo_instrucao": usuario.estilo_instrucao,
-                    "criado_em": usuario.criado_em
-                }
+                "dados": resultado
             }
         except ValueError as erro:
             return {
