@@ -8,11 +8,6 @@ class TarefaRepository:
         with SessionLocal() as session: 
             comando = select(Tarefa).where(Tarefa.usuario_id == usuario_id).order_by(Tarefa.criado_em)
             return list(session.scalars(comando))
-    
-    def buscar_por_id(self, id): 
-        with SessionLocal() as session: 
-            comando = select(Tarefa).where(Tarefa.id == id)
-            return session.scalar(comando)
         
     def criar_tarefa(self, usuario_id, tipo, titulo, descricao, prioridade, prazo=None): 
         with SessionLocal() as session: 
@@ -30,6 +25,39 @@ class TarefaRepository:
             session.refresh(tarefa)
 
             return tarefa
+
+    def alternar_concluido(self, tarefa_id, modo=None):
+        with SessionLocal() as session:
+            tarefa = session.scalar(
+                select(Tarefa).where(Tarefa.id == tarefa_id)
+            )
+
+            if tarefa is None:
+                return None
+
+            if modo == True:
+                tarefa.concluida = True
+                
+                session.commit()
+                session.refresh(tarefa)
+                
+                return tarefa.concluida
+
+            elif modo == False:
+                tarefa.concluida = False
+                
+                session.commit()
+                session.refresh(tarefa)
+                
+                return tarefa.concluida
+
+            else:
+                tarefa.concluida = not tarefa.concluida
+
+                session.commit()
+                session.refresh(tarefa)
+
+                return tarefa.concluida
         
     def excluir_por_id(self, id):
         with SessionLocal() as session: 

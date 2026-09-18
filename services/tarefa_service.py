@@ -1,44 +1,60 @@
 from repositories.tarefa_repository import TarefaRepository
+from controllers.usuario_controller import UsuarioController
 from datetime import datetime
+
+usuariocontroller = UsuarioController()
 
 class TarefaService:
  
     def __init__(self, repository=None): 
         self.repository = repository or TarefaRepository()
 
-    def listar_por_usuario(self, usuario):
-        print("a")
+    def listar_por_usuario(self, usuario_id):
+        usuario_id = str(usuario_id)
 
-    def buscar_por_id(self, id):
-        id = str(id)
-
-        if id == None:
+        if usuario_id == None:
             raise ValueError("O id não pode ser vazio.")
 
-        for i in list(id):
+        for i in list(usuario_id):
             if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
                 raise ValueError("O id só pode conter números.")
 
-        tarefa = self.repository.buscar_por_id(id)
+        usuario = usuariocontroller.buscar_por_id(usuario_id)
+        
+        if usuario["sucesso"] != True:
+            raise ValueError("Usuário não existe")
 
-        if tarefa == None:
-            raise ValueError("Tarefa não encontrada.")
+        tarefas = self.repository.listar_por_usuario(usuario_id)
 
-        prazo = tuple(str(tarefa.prazo))
-        prazo = f"{prazo[8, 9]}/{prazo[5, 6]}/{prazo[0, 3]}"
+        if tarefas == None:
+            raise ValueError("Tarefas não encontradas.")
 
-        tarefa = {
-            "id": tarefa.id,
-            "usuario_id": tarefa.usuario_id,
-            "tipo": tarefa.tipo,
-            "titulo": tarefa.titulo,
-            "descricao": tarefa.descricao,
-            "prioridade": tarefa.prioridade,
-            "prazo": str(tarefa.prazo),
-            "concluida": tarefa.concluida
-        }
+        if not tarefas:
+            raise ValueError("Usuário ainda não possui tarefas")
 
-        return tarefa
+        novas_tarefas = []
+
+        for i in tarefas:
+            prazo = str(i.prazo)
+            prazo = f"{prazo[8: 10]}/{prazo[5:7]}/{prazo[0:4]}"
+
+            tarefa = {
+                "id": i.id,
+                "usuario_id": i.usuario_id,
+                "tipo": i.tipo,
+                "titulo": i.titulo,
+                "descricao": i.descricao,
+                "prioridade": i.prioridade,
+                "prazo": prazo,
+                "concluida": i.concluida
+            }
+
+            novas_tarefas.append(tarefa)
+
+        return novas_tarefas
+
+    def alternar_concluido(self, id, modo):
+        print("S")
     
     def criar_tarefa(self, usuario_id, tipo, titulo, descricao, prioridade, prazo=None): 
 

@@ -18,8 +18,11 @@ class NovaTarefa(BaseModel):
     prioridade: str = "media" # 'baixa', 'media' ou 'alta'
     prazo: str | None = None
 
-@router.get("/tarefas?usuarioId={id}", status_code=status.HTTP_201_CREATED)
-def listar_tarefas():
+@router.get("")
+def listar_por_usuario(id_usuario):
+    resultado = controller.listar_por_usuario(id_usuario)
+
+    return resultado
 
 @router.post("/{id}", status_code=status.HTTP_201_CREATED)
 def criar_tarefa(dados: NovaTarefa):
