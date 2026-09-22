@@ -8,6 +8,11 @@ class TarefaRepository:
         with SessionLocal() as session: 
             comando = select(Tarefa).where(Tarefa.usuario_id == usuario_id).order_by(Tarefa.criado_em)
             return list(session.scalars(comando))
+
+    def buscar_por_id(self, id): 
+        with SessionLocal() as session: 
+            comando = select(Tarefa).where(Tarefa.id == id)
+            return session.scalars(comando).first()
         
     def criar_tarefa(self, usuario_id, tipo, titulo, descricao, prioridade, prazo=None): 
         with SessionLocal() as session: 
