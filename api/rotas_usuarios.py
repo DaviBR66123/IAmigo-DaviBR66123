@@ -22,6 +22,11 @@ def listar_usuarios():
         "dados": controller.listar_usuarios()
     }
 
+@router.get("")
+def buscar_por_id(id):
+    resultado = controller.buscar_por_id(id)
+
+    return resultado
 
 @router.post("", status_code=status.HTTP_201_CREATED)
 def criar_usuario(dados: NovoUsuario):
@@ -37,3 +42,9 @@ def criar_usuario(dados: NovoUsuario):
         )
 
     return resposta
+
+@router.delete("")
+def excluir_por_id(id):
+    resultado = controller.excluir_por_id(id)
+
+    return resultado

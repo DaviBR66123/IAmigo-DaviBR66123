@@ -18,13 +18,25 @@ class NovaTarefa(BaseModel):
     prioridade: str = "media" # 'baixa', 'media' ou 'alta'
     prazo: str | None = None
 
-@router.get("")
+@router.get("/usuario/{id_usuario}")
 def listar_por_usuario(id_usuario):
     resultado = controller.listar_por_usuario(id_usuario)
 
     return resultado
 
-@router.post("/{id}", status_code=status.HTTP_201_CREATED)
+@router.get("/{id}")
+def buscar_por_id(id):
+    resultado = controller.buscar_por_id(id)
+
+    return resultado
+
+@router.patch("/{id}/concluido")
+def alternar_concluido(id, modo=None):
+    resultado = controller.alternar_concluido
+
+    return resultado
+
+@router.post("/", status_code=status.HTTP_201_CREATED)
 def criar_tarefa(dados: NovaTarefa):
     resposta = controller.criar_tarefa(
         dados.usuario_id,
@@ -42,3 +54,9 @@ def criar_tarefa(dados: NovaTarefa):
         )
 
     return resposta
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def excluir_por_id(id):
+    resultado = controller.excluir_por_id
+
+    return resultado
