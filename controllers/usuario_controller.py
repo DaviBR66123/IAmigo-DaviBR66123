@@ -69,3 +69,24 @@ class UsuarioController:
                 "tipo": "FALHA_TECNICA",
                 "mensagem": "Não foi possível concluir a operação."
             }
+
+    def excluir_por_id(self, id):
+        try:
+            resultado = self.service.excluir_por_id(id)
+            return {
+                "sucesso": True,
+                "tipo": "SUCESSO",
+                "mensagem": f"Perfil de id {id} excluido.",
+            }
+        except ValueError as erro:
+            return {
+                "sucesso": False,
+                "tipo": "REGRA_NEGOCIO",
+                "mensagem": str(erro)
+            }
+        except Exception:
+            return {
+                "sucesso": False,
+                "tipo": "FALHA_TECNICA",
+                "mensagem": "Não foi possível concluir a operação."
+            }

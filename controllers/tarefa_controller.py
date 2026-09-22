@@ -12,6 +12,29 @@ class TarefaController:
             return {
                 "sucesso": True,
                 "tipo": "SUCESSO",
+                "Mensagem": f"Tarefas do usuario de id {id} encontrada",
+                "dados": resultado
+            }
+        except ValueError as erro:
+            return {
+                "sucesso": False,
+                "tipo": "REGRA_NEGOCIO",
+                "mensagem": str(erro)
+            }
+        except Exception:
+            return {
+                "sucesso": False,
+                "tipo": "FALHA_TECNICA",
+                "mensagem": "Não foi possível concluir a operação."
+            }
+
+    def buscar_por_id(self, id):
+        try:
+            resultado = self.service.buscar_por_id(id)
+
+            return {
+                "sucesso": True,
+                "tipo": "SUCESSO",
                 "Mensagem": f"Tarefa de id {id} encontrada",
                 "dados": resultado
             }
@@ -27,6 +50,37 @@ class TarefaController:
                 "tipo": "FALHA_TECNICA",
                 "mensagem": "Não foi possível concluir a operação."
             }
+        
+    def alternar_concluido(self, id, modo=None):
+        try:
+            self.service.alternar_concluido(id, modo)
+            if modo == True:
+                msg = " para concluido"
+
+            elif modo == False:
+                msg = " para não concluido"
+
+            else:
+                msg = ""
+
+            return {
+                "sucesso": True,
+                "tipo": "SUCESSO",
+                "Mensagem": f"Status da tarefa {id} alternado{msg}."
+            }
+        except ValueError as erro:
+            return {
+                "sucesso": False,
+                "tipo": "REGRA_NEGOCIO",
+                "mensagem": str(erro)
+            }
+        except Exception:
+            return {
+                "sucesso": False,
+                "tipo": "FALHA_TECNICA",
+                "mensagem": "Não foi possível concluir a operação."
+            }
+        
     def criar_tarefa(self, usuario_id, tipo, titulo, descricao, prioridade, prazo=None):
         try:
             resultado = self.service.criar_tarefa(
@@ -41,6 +95,28 @@ class TarefaController:
                 "sucesso": True,
                 "tipo": "SUCESSO",
                 "mensagem": f"Tarefa '{resultado.titulo}' criada."
+            }
+        except ValueError as erro:
+            return {
+                "sucesso": False,
+                "tipo": "REGRA_NEGOCIO",
+                "mensagem": str(erro)
+            }
+        except Exception:
+            return {
+                "sucesso": False,
+                "tipo": "FALHA_TECNICA",
+                "mensagem": "Não foi possível concluir a operação."
+            }
+
+    def excluir_por_id(self, id):
+        try:
+            self.service.excluir_por_id(id)
+
+            return {
+                "sucesso": True,
+                "tipo": "SUCESSO",
+                "Mensagem": f"Tarefa de id {id} excluida",
             }
         except ValueError as erro:
             return {
