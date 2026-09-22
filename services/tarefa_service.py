@@ -53,8 +53,41 @@ class TarefaService:
 
         return novas_tarefas
 
-    def alternar_concluido(self, id, modo):
-        print("S")
+    def buscar_por_id(self, id):
+        if id == None:
+            raise ValueError("O id não pode ser vazio.")
+
+        for i in list(str(id)):
+            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
+                raise ValueError("O id só pode conter números.")
+
+        tarefa = self.repository.buscar_por_id(id)
+
+        if tarefa == None:
+            raise ValueError("Tarefa não encontrada.")
+
+        resultado = {
+            "usuario_id": tarefa.usuario_id,
+            "tipo": tarefa.tipo,
+            "titulo": tarefa.titulo,
+            "descricao": tarefa.descricao,
+            "prioridade": tarefa.prioridade,
+            "prazo": tarefa.prazo
+        }
+        return resultado
+    
+    def alternar_concluido(self, id, modo=None):
+        if id == None:
+            raise ValueError("O id não pode ser vazio.")
+
+        for i in list(str(id)):
+            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
+                raise ValueError("O id só pode conter números.")
+
+        if modo not in {None, True, False}:
+            raise ValueError("O modo deve ser True, False ou Vazio.")
+
+        self.repository.alternar_concluido(id, modo)
     
     def criar_tarefa(self, usuario_id, tipo, titulo, descricao, prioridade, prazo=None): 
 
@@ -113,4 +146,16 @@ class TarefaService:
         )
 
     def excluir_por_id(self, id):
-        print("a")
+        if id == None:
+            raise ValueError("O id não pode ser vazio.")
+
+        for i in list(str(id)):
+            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
+                raise ValueError("O id só pode conter números.")
+
+        excluida = self.repository.excluir_por_id(id)
+
+        if not excluida:
+            raise ValueError("Tarefa não encontrada.")
+
+        return True
