@@ -51,13 +51,13 @@ class TarefaController:
                 "mensagem": "Não foi possível concluir a operação."
             }
         
-    def alternar_concluido(self, id, modo=None):
+    def alternar_concluido(self, id, modo="None"):
         try:
             self.service.alternar_concluido(id, modo)
-            if modo == True:
+            if modo.casefold() == "true":
                 msg = " para concluido"
 
-            elif modo == False:
+            elif modo.casefold() == "false":
                 msg = " para não concluido"
 
             else:
@@ -111,12 +111,12 @@ class TarefaController:
 
     def excluir_por_id(self, id):
         try:
-            self.service.excluir_por_id(id)
+            resultado = self.service.excluir_por_id(id)
 
             return {
                 "sucesso": True,
                 "tipo": "SUCESSO",
-                "Mensagem": f"Tarefa de id {id} excluida",
+                "Mensagem": f"Tarefa de id {id} excluida"
             }
         except ValueError as erro:
             return {
