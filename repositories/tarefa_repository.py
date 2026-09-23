@@ -31,7 +31,7 @@ class TarefaRepository:
 
             return tarefa
 
-    def alternar_concluido(self, tarefa_id, modo=None):
+    def alternar_concluido(self, tarefa_id, modo="None"):
         with SessionLocal() as session:
             tarefa = session.scalar(
                 select(Tarefa).where(Tarefa.id == tarefa_id)
@@ -40,7 +40,7 @@ class TarefaRepository:
             if tarefa is None:
                 return None
 
-            if modo == True:
+            if modo.casefold() == "true":
                 tarefa.concluida = True
                 
                 session.commit()
@@ -48,7 +48,7 @@ class TarefaRepository:
                 
                 return tarefa.concluida
 
-            elif modo == False:
+            elif modo.casefold() == "false":
                 tarefa.concluida = False
                 
                 session.commit()
