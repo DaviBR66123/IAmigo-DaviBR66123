@@ -1,4 +1,5 @@
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, Enum, Date
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from config.database import Base
 
@@ -15,3 +16,9 @@ class Tarefa(Base):
     prazo = Column(Date, nullable=True)
     concluida = Column(Boolean, nullable=False, default=False)
     criado_em = Column(DateTime, default=func.now())
+
+    passos = relationship(
+        "Passo",
+        back_populates="tarefa",
+        cascade="all, delete-orphan"
+    )
