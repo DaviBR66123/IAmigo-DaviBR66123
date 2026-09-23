@@ -22,7 +22,7 @@ class TarefaService:
         usuario = usuariocontroller.buscar_por_id(usuario_id)
         
         if usuario["sucesso"] != True:
-            raise ValueError("Usuário não existe")
+            raise ValueError(usuario['mensagem'])
 
         tarefas = self.repository.listar_por_usuario(usuario_id)
 
@@ -76,7 +76,7 @@ class TarefaService:
         }
         return resultado
     
-    def alternar_concluido(self, id, modo=None):
+    def alternar_concluido(self, id, modo="None"):
         if id == None:
             raise ValueError("O id não pode ser vazio.")
 
@@ -84,7 +84,7 @@ class TarefaService:
             if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
                 raise ValueError("O id só pode conter números.")
 
-        if modo not in {None, True, False}:
+        if modo.casefold() not in {"none", "true", "false"}:
             raise ValueError("O modo deve ser True, False ou Vazio.")
 
         self.repository.alternar_concluido(id, modo)
