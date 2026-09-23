@@ -31,12 +31,12 @@ def buscar_por_id(id):
     return resultado
 
 @router.patch("/{id}/concluido")
-def alternar_concluido(id, modo=None):
-    resultado = controller.alternar_concluido
+def alternar_concluido(id, modo="None"):
+    resultado = controller.alternar_concluido(id, modo)
 
     return resultado
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 def criar_tarefa(dados: NovaTarefa):
     resposta = controller.criar_tarefa(
         dados.usuario_id,
@@ -55,8 +55,8 @@ def criar_tarefa(dados: NovaTarefa):
 
     return resposta
 
-@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("")
 def excluir_por_id(id):
-    resultado = controller.excluir_por_id
+    resultado = controller.excluir_por_id(id)
 
     return resultado

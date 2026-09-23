@@ -22,7 +22,7 @@ def listar_usuarios():
         "dados": controller.listar_usuarios()
     }
 
-@router.get("")
+@router.get("/{id}")
 def buscar_por_id(id):
     resultado = controller.buscar_por_id(id)
 
