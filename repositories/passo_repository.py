@@ -1,13 +1,13 @@
 from sqlalchemy import select 
 from config.database import SessionLocal 
-from models.passos import Passo
+from models.passo import Passo
 
 class PassoRepository:
 
     def listar_por_tarefa(self, tarefa_id):
         with SessionLocal() as session:
             comando = select(Passo).where(Passo.tarefa_id == tarefa_id).order_by(Passo.ordem)
-            return list(session.scalar(comando))
+            return list(session.scalars(comando))
 
     def criar_passo(self, tarefa_id, texto, ordem):
         with SessionLocal() as session:
@@ -55,3 +55,17 @@ class PassoRepository:
                 session.refresh(passo)
 
                 return passo.concluido
+
+    def excluir_por_id(self, id):
+        with SessionLocal() as session: 
+            passo = session.scalar( 
+                select(Passo).where(Passo.id == id) 
+            )
+        
+            if passo is None:
+                return False
+                
+            session.delete(passo) 
+            session.commit() 
+        
+            return True

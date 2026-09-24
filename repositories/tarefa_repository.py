@@ -3,7 +3,6 @@ from config.database import SessionLocal
 from models.tarefa import Tarefa
 
 class TarefaRepository:
-    
     def listar_por_usuario(self, usuario_id): 
         with SessionLocal() as session: 
             comando = select(Tarefa).where(Tarefa.usuario_id == usuario_id).order_by(Tarefa.criado_em)
