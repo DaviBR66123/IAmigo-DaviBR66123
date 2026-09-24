@@ -1,8 +1,13 @@
+from common.validações_genericas import Validações
 from repositories.passo_repository import PassoRepository
-from controllers.tarefa_controller import TarefaController
+from services.tarefa_service import TarefaService
 from datetime import datetime
 
-tarefacontroller = TarefaController()
+validacoes = Validações()
+
+_validar_id = validacoes._validar_id
+
+tarefaservice = TarefaService()
 
 class PassoService:
  
@@ -10,36 +15,29 @@ class PassoService:
         self.repository = repository or PassoRepository()
 
     def listar_por_tarefa(self, tarefa_id):
-        tarefa_id = str(tarefa_id)
 
-        if tarefa_id == None:
-            raise ValueError("O id não pode ser vazio.")
+        tarefa_id = _validar_id(tarefa_id)
 
-        for i in list(tarefa_id):
-            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
-                raise ValueError("O id só pode conter números.")
-
-        tarefa = tarefacontroller.buscar_por_id(tarefa_id)
+        try:
+            tarefaservice.buscar_por_id(tarefa_id)
         
-        if tarefa["sucesso"] != True:
-            raise ValueError(tarefa['mensagem'])
+        except ValueError as erro:
+            raise ValueError(f"Falha no service tarefas, listar_por_id: {erro}")
+
 
         passos = self.repository.listar_por_tarefa(tarefa_id)
-
-        if passos == None:
-            raise ValueError("Passos não encontrados.")
 
         if not passos:
             raise ValueError("Tarefa ainda não possui passos")
 
         novos_passos = []
 
-        for i in passos.values:
+        for i in passos:
             passo = {
                 "id": i.id,
                 "tarefa_id": i.tarefa_id,
                 "texto": i.texto,
-                "concluida": i.concluida,
+                "concluida": i.concluido,
                 "ordem": i.ordem
             }
 
@@ -47,23 +45,20 @@ class PassoService:
 
         return novos_passos
 
-    def criar_passo(self, tarefa_id, texto, ordem):
-        tarefa_id = str(tarefa_id)
+    def criar_passo(self, tarefa_id, texto):
 
-        if tarefa_id == None:
-            raise ValueError("O id não pode ser vazio.")
-
-        for i in list(tarefa_id):
-            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
-                raise ValueError("O id só pode conter números.")
+        tarefa_id = _validar_id(tarefa_id)
 
         if texto == "":
             raise ValueError("Texto não pode ser vazio")
 
-        if ordem <= 0:
-            raise ValueError("A ordem precisa fazer sentido. 0 até da de engolir, mas -1 não")
+        tarefa_passos = self.listar_por_tarefa(tarefa_id)
 
-        passo = self.repository.criar_passo(tarefa_id, texto, ordem)
+
+        ordem = tarefa_passos[-1]["ordem"]
+        ordem += 1
+
+        self.repository.criar_passo(tarefa_id, texto, ordem)
 
         return {
             "tarefa_id": tarefa_id,
@@ -72,14 +67,19 @@ class PassoService:
         }
 
     def alternar_concluido(self, id, modo="None"):
-        if id == None:
-            raise ValueError("O id não pode ser vazio.")
 
-        for i in list(str(id)):
-            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
-                raise ValueError("O id só pode conter números.")
+        id = _validar_id(id)
 
         if modo.casefold() not in {"none", "true", "false"}:
             raise ValueError("O modo deve ser True, False ou Vazio.")
 
         self.repository.alternar_concluido(id, modo)
+
+    def excluir_por_id(self, id):
+
+        id = _validar_id(id)
+
+        resultado = self.repository.excluir_por_id(id)
+
+        if resultado == False:
+            raise ValueError("Passo não encontrado")

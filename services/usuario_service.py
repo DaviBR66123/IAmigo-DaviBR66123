@@ -1,4 +1,9 @@
+from common.validações_genericas import Validações
 from repositories.usuario_repository import UsuarioRepository
+
+validacoes = Validações()
+
+_validar_id = validacoes._validar_id
 
 class UsuarioService:
  
@@ -16,14 +21,8 @@ class UsuarioService:
         return usuarios_dict
 
     def buscar_por_id(self, id):
-        if id == None:
-            raise ValueError("O id não pode ser vazio.")
 
-        id = str(id)
-
-        for i in list(id):
-            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
-                raise ValueError("O id só pode conter números.")
+        id = _validar_id(id)
 
         usuario = self.repository.buscar_por_id(id)
 
@@ -72,14 +71,8 @@ class UsuarioService:
             )
 
     def excluir_por_id(self, id):
-        if id == None:
-            raise ValueError("O id não pode ser vazio.")
 
-        id = str(id)
-
-        for i in list(id):
-            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
-                raise ValueError("O id só pode conter números.")
+        id = _validar_id(id)
 
         excluido = self.repository.excluir_por_id(id)
 

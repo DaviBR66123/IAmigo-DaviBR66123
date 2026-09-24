@@ -1,8 +1,12 @@
+from common.validações_genericas import Validações
 from repositories.tarefa_repository import TarefaRepository
-from controllers.usuario_controller import UsuarioController
+from services.usuario_service import UsuarioService
 from datetime import datetime
 
-usuariocontroller = UsuarioController()
+usuarioservice = UsuarioService()
+validacoes = Validações()
+
+_validar_id = validacoes._validar_id
 
 class TarefaService:
  
@@ -10,24 +14,17 @@ class TarefaService:
         self.repository = repository or TarefaRepository()
 
     def listar_por_usuario(self, usuario_id):
-        usuario_id = str(usuario_id)
 
-        if usuario_id == None:
-            raise ValueError("O id não pode ser vazio.")
-
-        for i in list(usuario_id):
-            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
-                raise ValueError("O id só pode conter números.")
-
-        usuario = usuariocontroller.buscar_por_id(usuario_id)
+        usuario_id = _validar_id(usuario_id)
         
-        if usuario["sucesso"] != True:
-            raise ValueError(usuario['mensagem'])
+
+        try:
+            usuarioservice.buscar_por_id(usuario_id)
+        
+        except ValueError as erro:
+            raise ValueError(f"Falha no service usuario, buscar_por_id: {erro}")
 
         tarefas = self.repository.listar_por_usuario(usuario_id)
-
-        if tarefas == None:
-            raise ValueError("Tarefas não encontradas.")
 
         if not tarefas:
             raise ValueError("Usuário ainda não possui tarefas")
@@ -54,12 +51,9 @@ class TarefaService:
         return novas_tarefas
 
     def buscar_por_id(self, id):
-        if id == None:
-            raise ValueError("O id não pode ser vazio.")
 
-        for i in list(str(id)):
-            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
-                raise ValueError("O id só pode conter números.")
+        id = _validar_id(id)
+
 
         tarefa = self.repository.buscar_por_id(id)
 
@@ -77,12 +71,9 @@ class TarefaService:
         return resultado
     
     def alternar_concluido(self, id, modo="None"):
-        if id == None:
-            raise ValueError("O id não pode ser vazio.")
 
-        for i in list(str(id)):
-            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
-                raise ValueError("O id só pode conter números.")
+        id = _validar_id(id)
+
 
         if modo.casefold() not in {"none", "true", "false"}:
             raise ValueError("O modo deve ser True, False ou Vazio.")
@@ -92,15 +83,7 @@ class TarefaService:
     def criar_tarefa(self, usuario_id, tipo, titulo, descricao, prioridade, prazo=None): 
 
         # Regras de ID
-        if not usuario_id: 
-            raise ValueError("O nome não pode ficar vazio.")
-
-        if type(usuario_id) != str:
-            usuario_id = str(usuario_id)
-
-        for i in list(usuario_id):
-            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
-                raise ValueError("O id só pode conter números.")
+        usuario_id = _validar_id(usuario_id)
 
         # Regras de Tipo
         if not tipo:
@@ -146,12 +129,9 @@ class TarefaService:
         )
 
     def excluir_por_id(self, id):
-        if id == None:
-            raise ValueError("O id não pode ser vazio.")
 
-        for i in list(str(id)):
-            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
-                raise ValueError("O id só pode conter números.")
+        id = _validar_id(id)
+
 
         excluida = self.repository.excluir_por_id(id)
 
