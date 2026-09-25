@@ -14,11 +14,14 @@ while True:
     opcao = input("Escolha: ").strip() 
 
     if opcao == "1": 
-        perfis = controller.listar_perfis() 
+        perfis = controller.listar_usuarios() 
 
-        print("\nPerfis:") 
-        for nome in perfis: 
-            print("-", nome) 
+        print(f"\n{perfis['mensagem']}")
+
+        if perfis['sucesso'] == True:
+            print("\nPerfis:") 
+            for i in perfis["dados"]: 
+                print("-", perfis['dados'][i]['nome'])
 
     elif opcao == "2":
         usuario = input("buscar Usuario de id: ")

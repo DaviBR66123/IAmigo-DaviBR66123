@@ -1,39 +1,19 @@
-from services.usuario_service import UsuarioService
+from services.tarefa_service import TarefaService
 
 
-class UsuarioController:
+class TarefaController:
     def __init__(self, service=None):
-        self.service = service or UsuarioService()
+        self.service = service or TarefaService()
 
-    def criar_perfil(self, nome, estilo_instrucao):
+    def listar_por_usuario(self, id):
         try:
-            usuario = self.service.criar_usuario(nome, estilo_instrucao)
+            resultado = self.service.listar_por_usuario(id)
+
             return {
                 "sucesso": True,
                 "tipo": "SUCESSO",
-                "mensagem": f"Perfil {usuario.nome} criado."
-            }
-        except ValueError as erro:
-            return {
-                "sucesso": False,
-                "tipo": "REGRA_NEGOCIO",
-                "mensagem": str(erro)
-            }
-        except Exception:
-            return {
-                "sucesso": False,
-                "tipo": "FALHA_TECNICA",
-                "mensagem": "Não foi possível concluir a operação."
-            }
-
-    def listar_usuarios(self):
-        try:
-            usuarios = self.service.listar_usuarios()
-            return {
-                "sucesso": True,
-                 "tipo": "SUCESSO",
-                "mensagem": f"Usuários encontrados.",
-                "dados": usuarios
+                "Mensagem": f"Tarefas do usuario de id {id} encontrada",
+                "dados": resultado
             }
         except ValueError as erro:
             return {
@@ -51,11 +31,70 @@ class UsuarioController:
     def buscar_por_id(self, id):
         try:
             resultado = self.service.buscar_por_id(id)
+
             return {
                 "sucesso": True,
                 "tipo": "SUCESSO",
-                "mensagem": f"Perfil de id {id} encontrado.",
+                "Mensagem": f"Tarefa de id {id} encontrada",
                 "dados": resultado
+            }
+        except ValueError as erro:
+            return {
+                "sucesso": False,
+                "tipo": "REGRA_NEGOCIO",
+                "mensagem": str(erro)
+            }
+        except Exception:
+            return {
+                "sucesso": False,
+                "tipo": "FALHA_TECNICA",
+                "mensagem": "Não foi possível concluir a operação."
+            }
+        
+    def alternar_concluido(self, id, modo="None"):
+        try:
+            self.service.alternar_concluido(id, modo)
+            if modo.casefold() == "true":
+                msg = " para concluido"
+
+            elif modo.casefold() == "false":
+                msg = " para não concluido"
+
+            else:
+                msg = ""
+
+            return {
+                "sucesso": True,
+                "tipo": "SUCESSO",
+                "Mensagem": f"Status da tarefa {id} alternado{msg}."
+            }
+        except ValueError as erro:
+            return {
+                "sucesso": False,
+                "tipo": "REGRA_NEGOCIO",
+                "mensagem": str(erro)
+            }
+        except Exception:
+            return {
+                "sucesso": False,
+                "tipo": "FALHA_TECNICA",
+                "mensagem": "Não foi possível concluir a operação."
+            }
+        
+    def criar_tarefa(self, usuario_id, tipo, titulo, descricao, prioridade, prazo=None):
+        try:
+            resultado = self.service.criar_tarefa(
+                usuario_id=usuario_id,
+                tipo=tipo,
+                titulo=titulo,
+                descricao=descricao,
+                prioridade=prioridade,
+                prazo=prazo
+            )
+            return {
+                "sucesso": True,
+                "tipo": "SUCESSO",
+                "mensagem": f"Tarefa '{resultado.titulo}' criada."
             }
         except ValueError as erro:
             return {
@@ -73,10 +112,11 @@ class UsuarioController:
     def excluir_por_id(self, id):
         try:
             resultado = self.service.excluir_por_id(id)
+
             return {
                 "sucesso": True,
                 "tipo": "SUCESSO",
-                "mensagem": f"Perfil de id {id} excluido.",
+                "Mensagem": f"Tarefa de id {id} excluida"
             }
         except ValueError as erro:
             return {

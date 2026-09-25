@@ -3,3 +3,4 @@ core
 Pasta temporaria
 ui
 __pycache__
+.env

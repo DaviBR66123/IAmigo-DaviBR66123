@@ -1,0 +1,30 @@
+from fastapi import FastAPI
+
+from api.rotas_usuarios import router as usuarios_router
+from api.rotas_tarefas import router as tarefas_router
+from api.rotas_passos import router as passos_router
+
+app = FastAPI(
+    title="TPaC API",
+    description="Primeira API do TPaC",
+    version="1.0.0"
+)
+
+
+@app.get("/")
+def inicio():
+    return {
+        "sistema": "TPaC",
+        "api": "funcionando"
+    }
+
+app.include_router(usuarios_router)
+app.include_router(tarefas_router)
+app.include_router(passos_router)
+
+@app.get("/")
+def inicio():
+    return {
+        "sistema": "TPaC",
+        "api": "funcionando"
+    }

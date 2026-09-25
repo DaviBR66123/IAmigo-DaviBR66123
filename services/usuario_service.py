@@ -1,4 +1,9 @@
+from common.validações_genericas import Validações
 from repositories.usuario_repository import UsuarioRepository
+
+validacoes = Validações()
+
+_validar_id = validacoes._validar_id
 
 class UsuarioService:
  
@@ -6,22 +11,32 @@ class UsuarioService:
         self.repository = repository or UsuarioRepository()
 
     def listar_usuarios(self): 
-        return self.repository.listar()
+        usuarios = self.repository.listar()
+
+        if usuarios == None:
+            raise ValueError("Não foi possivel listar usuários.")
+
+        usuarios_dict = {u.id: {'id': u.id, 'nome': u.nome, 'estilo': u.estilo_instrucao} for u in usuarios}
+
+        return usuarios_dict
 
     def buscar_por_id(self, id):
-        if id == None:
-            raise ValueError("O id não pode ser vazio")
 
-        for i in list(id):
-            if i not in {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}:
-                raise ValueError("O id só pode conter números")
+        id = _validar_id(id)
 
         usuario = self.repository.buscar_por_id(id)
 
         if usuario == None:
-            raise ValueError("Usuário não encontrado")
+            raise ValueError("Usuário não encontrado.")
+        
+        resultado = {
+                "id": usuario.id,
+                "nome": usuario.nome,
+                "estilo_instrucao": usuario.estilo_instrucao,
+                "criado_em": usuario.criado_em
+            }
 
-        return usuario
+        return resultado
     
     def criar_usuario(self, nome, estilo_instrucao): 
         nome = nome.strip()
@@ -54,3 +69,14 @@ class UsuarioService:
             nome, 
             estilo_instrucao 
             )
+
+    def excluir_por_id(self, id):
+
+        id = _validar_id(id)
+
+        excluido = self.repository.excluir_por_id(id)
+
+        if not excluido:
+            raise ValueError("Usuario não encontrado.")
+
+        return True
