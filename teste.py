@@ -10,6 +10,8 @@ from repositories.passo_repository import PassoRepository
 from services.passo_service import PassoService
 from controllers.passo_controller import PassoController
 
+from integrations.ia.ia_client import IAClient
+
 from os import system
 
 Trepository = TarefaRepository()
@@ -24,33 +26,18 @@ Prepository = PassoRepository()
 Pservice = PassoService()
 Pcontroller = PassoController()
 
+iaclient = IAClient()
+
 system("cls")
 escolha = str(input())
 
 
 if escolha == "1":
-    resultado = Pservice.criar_passo(
-        10,
-        "O homem é o lobo do homem"
+    resposta = iaclient.enviar_prompt(
+        prompt="Quem ganharia numa luta usando seus poderes, P. Diddy ou Jafrey Apstain?"
     )
 
-    print(resultado)
-
-elif escolha == "2":
-    resultado = Pservice.listar_por_tarefa(10)
-    '''
-    for tarefa in resultado:
-        print("---- Passo ----")
-
-        for chave, valor in tarefa.items():
-            print(f"{chave}: {valor}")
-    '''
-    print(resultado)
-    
-elif escolha == "3":
-    resultado = Pservice.alternar_concluido(7)
-
-    print(resultado)
+    print(resposta.output_text)
 
 else:
     print("End")
