@@ -70,6 +70,39 @@ class UsuarioService:
             estilo_instrucao 
             )
 
+    def atualizar_usuario(self, id, nome, estilo_instrucao):
+        
+        # Validar ID
+        id = _validar_id(id)
+
+        # Validar Nome
+        nome = nome.strip()
+
+        if not nome: 
+            raise ValueError("O nome não pode ficar vazio.")
+
+        if len(nome) < 3: 
+            raise ValueError("O nome precisa ter pelo menos 3 caracteres.")
+
+        if len(nome) > 100:
+            raise ValueError("O nome pode ter no máximo 100 caracteres. Você ultrapassou o limite.")
+
+        # Validar Estilo
+        if estilo_instrucao not in {"direto", "detalhado"}:
+            raise ValueError("O estilo deve ser 'direto' ou 'detalhado'.")
+
+        # Verificar se usuário existe
+        usuario_atual = self.repository.buscar_por_id(id)
+        if usuario_atual is None:
+            raise ValueError("Usuário não encontrado.")
+
+        # Verificar se novo nome já existe (mas não é o nome atual)
+        existente = self.repository.buscar_por_nome(nome)
+        if existente is not None and existente.id != id:
+            raise ValueError("Já existe um perfil com esse nome.")
+
+        return self.repository.atualizar(id, nome, estilo_instrucao)
+
     def excluir_por_id(self, id):
 
         id = _validar_id(id)

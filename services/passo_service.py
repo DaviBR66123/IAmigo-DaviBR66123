@@ -1,13 +1,14 @@
 from common.validações_genericas import Validações
 from repositories.passo_repository import PassoRepository
 from services.tarefa_service import TarefaService
+from integrations.ia.ia_client import IAClient
 from datetime import datetime
 
 validacoes = Validações()
-
 _validar_id = validacoes._validar_id
 
 tarefaservice = TarefaService()
+iaclient = IAClient()
 
 class PassoService:
  
@@ -45,25 +46,22 @@ class PassoService:
 
         return novos_passos
 
-    def criar_passo(self, tarefa_id, texto):
+    def criar_passo(self, tarefa_id):
 
         tarefa_id = _validar_id(tarefa_id)
 
-        if texto == "":
-            raise ValueError("Texto não pode ser vazio")
+        resposta_ia = iaclient.criar_passo(tarefa_id)
 
-        tarefa_passos = self.listar_por_tarefa(tarefa_id)
+        passos_criados = []
 
-
-        ordem = tarefa_passos[-1]["ordem"]
-        ordem += 1
-
-        self.repository.criar_passo(tarefa_id, texto, ordem)
-
+        for i in resposta_ia:
+            
+            self.repository.criar_passo(tarefa_id, str(i["titulo"]), int(i['numero']))
+            passos_criados.append(i)
+        
         return {
             "tarefa_id": tarefa_id,
-            "texto": texto,
-            "ordem": ordem
+            "passos_criados": passos_criados
         }
 
     def alternar_concluido(self, id, modo="None"):

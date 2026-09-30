@@ -66,7 +66,8 @@ class TarefaService:
             "titulo": tarefa.titulo,
             "descricao": tarefa.descricao,
             "prioridade": tarefa.prioridade,
-            "prazo": tarefa.prazo
+            "prazo": tarefa.prazo,
+            "criado_em": tarefa.criado_em
         }
         return resultado
     
@@ -121,6 +122,58 @@ class TarefaService:
 
         return self.repository.criar_tarefa(
             usuario_id=usuario_id,
+            tipo=tipo,
+            titulo=titulo,
+            descricao=descricao,
+            prioridade=prioridade,
+            prazo=prazo
+        )
+
+    def atualizar_tarefa(self, id, tipo, titulo, descricao, prioridade, prazo=None):
+
+        # Validar ID
+        id = _validar_id(id)
+
+        # Verificar se tarefa existe
+        tarefa_atual = self.repository.buscar_por_id(id)
+        if tarefa_atual is None:
+            raise ValueError("Tarefa não encontrada.")
+
+        # Regras de Tipo
+        if not tipo:
+            raise ValueError("Tipo não pode ficar vazio")
+
+        if tipo not in {"tarefas_diarias", "tarefas_educacionais"}:
+            raise ValueError("Tipo deve ser tarefas_diarias ou tarefas_educacionais")
+
+        # Regras de Titulo
+        if not titulo:
+            raise ValueError("O titulo não pode ficar vazio")
+
+        if len(list(titulo)) > 200:
+            raise ValueError("O titulo deve possuir no máximo 200 caracteres")
+
+        # Regras de descrição
+        # Não necessária
+
+        # Regras de prioridade
+        if not prioridade:
+            raise ValueError("Prioridade não pode ficar vazia")
+
+        if prioridade not in {'baixa', 'media', 'alta'}:
+            raise ValueError("A prioridade deve ser baixa, media ou alta")
+
+        # Regras de prazo
+        if prazo:
+            try:
+                prazo = datetime.strptime(prazo, "%d/%m/%Y").date()
+            except ValueError:
+                raise ValueError("O formato da data é inválido. A data deve estar no formato Dia/Mês/Ano")
+        else:
+            prazo = None
+
+        return self.repository.atualizar(
+            id=id,
             tipo=tipo,
             titulo=titulo,
             descricao=descricao,
