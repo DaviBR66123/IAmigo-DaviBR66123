@@ -62,7 +62,28 @@ class TarefaRepository:
                 session.refresh(tarefa)
 
                 return tarefa.concluida
-        
+
+    def atualizar(self, id, tipo, titulo, descricao, prioridade, prazo=None):
+        with SessionLocal() as session:
+            tarefa = session.scalar(
+                select(Tarefa).where(Tarefa.id == id)
+            )
+
+            if tarefa is None:
+                return None
+
+            tarefa.tipo = tipo
+            tarefa.titulo = titulo
+            tarefa.descricao = descricao
+            tarefa.prioridade = prioridade
+            tarefa.prazo = prazo
+
+            session.commit()
+            session.refresh(tarefa)
+
+            return tarefa
+
+    
     def excluir_por_id(self, id):
         with SessionLocal() as session: 
             tarefa = session.scalar( 

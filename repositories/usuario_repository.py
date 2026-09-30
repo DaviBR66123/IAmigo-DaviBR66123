@@ -31,6 +31,23 @@ class UsuarioRepository:
         session.refresh(usuario)
 
         return usuario
+
+    def atualizar(self, id, nome, estilo_instrucao):
+        with SessionLocal() as session:
+            usuario = session.scalar(
+                select(Usuario).where(Usuario.id == id)
+            )
+
+            if usuario is None:
+                return None
+
+            usuario.nome = nome
+            usuario.estilo_instrucao = estilo_instrucao
+
+            session.commit()
+            session.refresh(usuario)
+
+            return usuario
     
     def excluir_por_nome(self, nome):
         with SessionLocal() as session: 
