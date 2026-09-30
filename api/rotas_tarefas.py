@@ -11,11 +11,19 @@ router = APIRouter(
 controller = TarefaController()
 
 class NovaTarefa(BaseModel):
-    usuario_id: str
+    usuario_id: int
     tipo: str # 'tarefas_diarias' ou 'tarefas_educacionais'
     titulo: str 
     descricao: str | None = None
     prioridade: str = "media" # 'baixa', 'media' ou 'alta'
+    prazo: str | None = None
+    criado_em: str
+
+class AtualizarTarefa(BaseModel):
+    tipo: str
+    titulo: str
+    descricao: str | None = None
+    prioridade: str = "media"
     prazo: str | None = None
 
 @router.get("/usuario/{id_usuario}")
@@ -40,6 +48,25 @@ def alternar_concluido(id, modo="None"):
 def criar_tarefa(dados: NovaTarefa):
     resposta = controller.criar_tarefa(
         dados.usuario_id,
+        dados.tipo,
+        dados.titulo,
+        dados.descricao,
+        dados.prioridade,
+        dados.prazo
+    )
+
+    if not resposta["sucesso"]:
+        raise HTTPException(
+            status_code=422,
+            detail=resposta["mensagem"]
+        )
+
+    return resposta
+
+@router.put("/{id}")
+def atualizar_tarefa(id, dados: AtualizarTarefa):
+    resposta = controller.atualizar_tarefa(
+        id,
         dados.tipo,
         dados.titulo,
         dados.descricao,

@@ -43,6 +43,22 @@ def criar_usuario(dados: NovoUsuario):
 
     return resposta
 
+@router.put("/{id}")
+def atualizar_usuario(id, dados: NovoUsuario):
+    resposta = controller.atualizar_perfil(
+        id,
+        dados.nome,
+        dados.estilo_instrucao
+    )
+
+    if not resposta["sucesso"]:
+        raise HTTPException(
+            status_code=422,
+            detail=resposta["mensagem"]
+        )
+
+    return resposta
+
 @router.delete("")
 def excluir_por_id(id):
     resultado = controller.excluir_por_id(id)

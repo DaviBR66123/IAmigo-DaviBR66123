@@ -10,10 +10,6 @@ router = APIRouter(
 
 controller = PassoController()
 
-class NovoPasso(BaseModel):
-    tarefa_id: int
-    texto: str
-
 @router.get("/tarefa/{id}")
 def listar_por_tarefa(tarefa_id):
     resultado = controller.listar_por_tarefa(tarefa_id)
@@ -27,8 +23,8 @@ def alternar_concluido(id, modo="None"):
     return resultado
 
 @router.post("", status_code=status.HTTP_201_CREATED)
-def criar_passo(dados:NovoPasso):
-    resultado = controller.criar_passo(dados.tarefa_id, dados.texto)
+def criar_passo(tarefa_id):
+    resultado = controller.criar_passo(tarefa_id)
 
     return resultado
 
