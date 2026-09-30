@@ -70,6 +70,27 @@ class UsuarioController:
                 "mensagem": "Não foi possível concluir a operação."
             }
 
+    def atualizar_perfil(self, id, nome, estilo_instrucao):
+        try:
+            usuario = self.service.atualizar_usuario(id, nome, estilo_instrucao)
+            return {
+                "sucesso": True,
+                "tipo": "SUCESSO",
+                "mensagem": f"Perfil {usuario.nome} atualizado."
+            }
+        except ValueError as erro:
+            return {
+                "sucesso": False,
+                "tipo": "REGRA_NEGOCIO",
+                "mensagem": str(erro)
+            }
+        except Exception:
+            return {
+                "sucesso": False,
+                "tipo": "FALHA_TECNICA",
+                "mensagem": "Não foi possível concluir a operação."
+            }
+
     def excluir_por_id(self, id):
         try:
             resultado = self.service.excluir_por_id(id)

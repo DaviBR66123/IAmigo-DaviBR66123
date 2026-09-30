@@ -29,9 +29,9 @@ class PassoController:
                 "mensagem": "Não foi possível concluir a operação."
             }
 
-    def criar_passo(self, tarefa_id, texto):
+    def criar_passo(self, tarefa_id):
         try:
-            resultado = self.service.criar_passo(tarefa_id, texto)
+            resultado = self.service.criar_passo(tarefa_id)
 
             return {
                 "sucesso": True,
