@@ -74,3 +74,5 @@ class IAClient:
         resultado = desmenbriar_resposta_gemini(resultado.output_text)
 
         return resultado
+    
+    
