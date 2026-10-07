@@ -32,7 +32,7 @@ class UsuarioRepository:
 
         return usuario
 
-    def atualizar(self, id, nome, estilo_instrucao):
+    def atualizar(self, id, nome, estilo_instrucao, gmail, senha):
         with SessionLocal() as session:
             usuario = session.scalar(
                 select(Usuario).where(Usuario.id == id)
@@ -43,6 +43,8 @@ class UsuarioRepository:
 
             usuario.nome = nome
             usuario.estilo_instrucao = estilo_instrucao
+            usuario.gmail = gmail
+            usuario.senha = senha
 
             session.commit()
             session.refresh(usuario)
@@ -78,3 +80,8 @@ class UsuarioRepository:
         session.commit() 
     
         return True
+
+    def buscar_por_gmail(self, gmail):
+        with SessionLocal() as session:
+            comando = select(Usuario).where(Usuario.gmail == gmail)
+            return session.scalar(comando)
