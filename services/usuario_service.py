@@ -1,5 +1,6 @@
 from common.validações_genericas import Validações
 from repositories.usuario_repository import UsuarioRepository
+from common.auth import criar_token_acesso
 
 validacoes = Validações()
 
@@ -70,7 +71,7 @@ class UsuarioService:
             estilo_instrucao 
             )
 
-    def atualizar_usuario(self, id, nome, estilo_instrucao):
+    def atualizar_usuario(self, id, nome=None, estilo_instrucao=None, gmail=None, senha=None):
         
         # Validar ID
         id = _validar_id(id)
@@ -96,12 +97,25 @@ class UsuarioService:
         if usuario_atual is None:
             raise ValueError("Usuário não encontrado.")
 
+        # Verificar se há mudanças
+        if nome == usuario_atual.nome and estilo_instrucao == usuario_atual.estilo_instrucao and gmail == usuario_atual.gmail and senha == usuario_atual.senha:
+            raise ValueError("Não há mudanças")
+
         # Verificar se novo nome já existe (mas não é o nome atual)
         existente = self.repository.buscar_por_nome(nome)
         if existente is not None and existente.id != id:
             raise ValueError("Já existe um perfil com esse nome.")
 
-        return self.repository.atualizar(id, nome, estilo_instrucao)
+        if nome == None:
+            nome = usuario_atual.nome
+        if estilo_instrucao == None:
+            estilo_instrucao = usuario_atual.estilo_instrucao
+        if gmail == None:
+            gmail = usuario_atual.gmail
+        if senha == None:
+            senha = usuario_atual.senha
+
+        return self.repository.atualizar(id, nome, estilo_instrucao, gmail, senha)
 
     def excluir_por_id(self, id):
 
@@ -113,3 +127,40 @@ class UsuarioService:
             raise ValueError("Usuario não encontrado.")
 
         return True
+
+    def fazer_login(self, gmail, senha):
+        """
+        Valida credenciais e retorna o usuário se forem corretas.
+        Lança ValueError se inválidas.
+        """
+        # Validar entrada
+        gmail = gmail.strip()
+        senha = senha.strip()
+        
+        if not gmail or not senha:
+            raise ValueError("Email e senha são obrigatórios.")
+        
+        # Buscar usuário por email
+        usuario = self.repository.buscar_por_gmail(gmail)
+        
+        if usuario is None:
+            raise ValueError("Credenciais inválidas.")
+        
+        # ⚠️ IMPORTANTE: Comparação em TEXTO PLANO
+        # Na Aula 09 vamos usar HASH (passlib)
+        if usuario.senha != senha:
+            raise ValueError("Credenciais inválidas.")
+
+        dados_token = {
+        "id": usuario.id,
+        "gmail": usuario.gmail
+        }
+    
+        # Gera o token
+        token = criar_token_acesso(dados_token)
+        
+        # Sucesso: retornar dados do usuário (sem a senha)
+        return {
+            "access_token": token,
+            "token_type": "bearer"
+        }

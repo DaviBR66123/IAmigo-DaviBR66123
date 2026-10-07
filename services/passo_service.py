@@ -73,6 +73,7 @@ class PassoService:
 
         self.repository.alternar_concluido(id, modo)
 
+
     def excluir_por_id(self, id):
 
         id = _validar_id(id)
