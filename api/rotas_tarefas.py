@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 
 from controllers.tarefa_controller import TarefaController
+from common.auth import verificar_token
 
 router = APIRouter(
     prefix="/tarefas",
@@ -9,6 +11,7 @@ router = APIRouter(
 )
 
 controller = TarefaController()
+security = HTTPBearer()
 
 class NovaTarefa(BaseModel):
     usuario_id: int
@@ -27,25 +30,33 @@ class AtualizarTarefa(BaseModel):
     prazo: str | None = None
 
 @router.get("/usuario/{id_usuario}")
-def listar_por_usuario(id_usuario):
+def listar_por_usuario(id_usuario, credenciais: HTTPAuthCredentials = Depends(security)):
+    payload = verificar_token(credenciais.credentials)
+
     resultado = controller.listar_por_usuario(id_usuario)
 
     return resultado
 
 @router.get("/{id}")
-def buscar_por_id(id):
+def buscar_por_id(id, credenciais: HTTPAuthCredentials = Depends(security)):
+    payload = verificar_token(credenciais.credentials)
+
     resultado = controller.buscar_por_id(id)
 
     return resultado
 
 @router.patch("/{id}/concluido")
-def alternar_concluido(id, modo="None"):
+def alternar_concluido(id, modo="None", credenciais: HTTPAuthCredentials = Depends(security)):
+    payload = verificar_token(credenciais.credentials)
+
     resultado = controller.alternar_concluido(id, modo)
 
     return resultado
 
 @router.post("", status_code=status.HTTP_201_CREATED)
-def criar_tarefa(dados: NovaTarefa):
+def criar_tarefa(dados: NovaTarefa, credenciais: HTTPAuthCredentials = Depends(security)):
+    payload = verificar_token(credenciais.credentials)
+
     resposta = controller.criar_tarefa(
         dados.usuario_id,
         dados.tipo,
@@ -64,7 +75,9 @@ def criar_tarefa(dados: NovaTarefa):
     return resposta
 
 @router.put("/{id}")
-def atualizar_tarefa(id, dados: AtualizarTarefa):
+def atualizar_tarefa(id, dados: AtualizarTarefa, credenciais: HTTPAuthCredentials = Depends(security)):
+    payload = verificar_token(credenciais.credentials)
+
     resposta = controller.atualizar_tarefa(
         id,
         dados.tipo,
@@ -83,7 +96,9 @@ def atualizar_tarefa(id, dados: AtualizarTarefa):
     return resposta
 
 @router.delete("")
-def excluir_por_id(id):
+def excluir_por_id(id, credenciais: HTTPAuthCredentials = Depends(security)):
+    payload = verificar_token(credenciais.credentials)
+
     resultado = controller.excluir_por_id(id)
 
     return resultado

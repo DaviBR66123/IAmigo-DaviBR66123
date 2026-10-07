@@ -1,7 +1,10 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 
 from controllers.ia_controller import IAController
+from common.auth import verificar_token, teste_usuario_authenticado
+
 
 router = APIRouter(
     prefix="/ia",
@@ -9,9 +12,20 @@ router = APIRouter(
 )
 
 controller = IAController()
+security = HTTPBearer()
 
 @router.get("/call")
-def enviar_prompt(entrada):
+def enviar_prompt(entrada, credenciais: HTTPAuthCredentials = Depends(security)):
+    payload = verificar_token(credenciais.credentials)
+
     resultado = controller.enviar_prompt(entrada)
 
     return resultado
+
+'''
+@router.get("/teste")
+def testar(credenciais: HTTPAuthCredentials = Depends(security)):
+    teste = teste_usuario_authenticado(credenciais.credentials)
+
+    return teste
+'''
