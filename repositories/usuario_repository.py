@@ -19,11 +19,13 @@ class UsuarioRepository:
             comando = select(Usuario).where(Usuario.id == id)
             return session.scalar(comando)
     
-    def criar(self, nome, estilo_instrucao): 
+    def criar(self, nome, estilo_instrucao, gmail, senha): 
         with SessionLocal() as session: 
             usuario = Usuario( 
             nome=nome,  
-            estilo_instrucao=estilo_instrucao 
+            estilo_instrucao=estilo_instrucao,
+            gmail=gmail,
+            senha=senha
             )
 
         session.add(usuario) 
@@ -85,3 +87,16 @@ class UsuarioRepository:
         with SessionLocal() as session:
             comando = select(Usuario).where(Usuario.gmail == gmail)
             return session.scalar(comando)
+
+    def permissoes(self, id, role):
+        with SessionLocal() as session:
+            usuario = session.scalar(
+                select(Usuario).where(Usuario.id == id)
+            )
+
+            usuario.role = role
+
+            session.commit()
+            session.refresh(usuario)
+
+            return usuario
