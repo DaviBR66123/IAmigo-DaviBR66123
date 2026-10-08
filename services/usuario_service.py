@@ -17,7 +17,7 @@ class UsuarioService:
         if usuarios == None:
             raise ValueError("Não foi possivel listar usuários.")
 
-        usuarios_dict = {u.id: {'id': u.id, 'nome': u.nome, 'estilo': u.estilo_instrucao} for u in usuarios}
+        usuarios_dict = {u.id: {'id': u.id, 'nome': u.nome, 'estilo': u.estilo_instrucao, 'role': u.role, 'gmail': u.gmail, 'senha': u.senha, 'criado_em': u.criado_em} for u in usuarios}
 
         return usuarios_dict
 
@@ -34,12 +34,15 @@ class UsuarioService:
                 "id": usuario.id,
                 "nome": usuario.nome,
                 "estilo_instrucao": usuario.estilo_instrucao,
+                "role": usuario.role,
+                "gmail": usuario.gmail,
+                "senha": usuario.senha,
                 "criado_em": usuario.criado_em
             }
 
         return resultado
     
-    def criar_usuario(self, nome, estilo_instrucao): 
+    def criar_usuario(self, nome, estilo_instrucao, gmail, senha): 
         nome = nome.strip()
 
         if not nome: 
@@ -49,6 +52,12 @@ class UsuarioService:
             raise ValueError( 
             "O estilo deve ser 'direto' ou 'detalhado'." 
             )
+
+        if not gmail:
+            raise ValueError("Gmail não pode ficar vazio")
+
+        if not senha: 
+            raise ValueError("Senha não pode ficar vazia")
         
         existente = self.repository.buscar_por_nome(nome)
 
@@ -68,7 +77,9 @@ class UsuarioService:
         
         return self.repository.criar( 
             nome, 
-            estilo_instrucao 
+            estilo_instrucao,
+            gmail,
+            senha
             )
 
     def atualizar_usuario(self, id, nome=None, estilo_instrucao=None, gmail=None, senha=None):
@@ -153,7 +164,7 @@ class UsuarioService:
 
         dados_token = {
         "id": usuario.id,
-        "gmail": usuario.gmail
+        "role": usuario.role
         }
     
         # Gera o token
@@ -164,3 +175,14 @@ class UsuarioService:
             "access_token": token,
             "token_type": "bearer"
         }
+
+    def permissoes(self, id, role):
+
+        id = _validar_id(id)
+
+        if role not in {"user", "admin"}:
+            raise ValueError("Cargo invalido para promossão")
+
+        resultado = self.repository.permissoes(id, role)
+
+        return resultado.role
